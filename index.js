@@ -26,6 +26,7 @@ app.engine('handlebars', handlebars({
 app.use(express.static('public'))
 
 app.get('/', (req, res) => {
+    // refresh messages
     db.get('messages').write()
     res.render('main', {
         layout: 'index'
@@ -33,13 +34,7 @@ app.get('/', (req, res) => {
 })
 
 app.get('/messages', async (req, res) => {
-    const messages = await fs.readFileSync(`${__dirname}/db.json`)
-    if (messages.length !== 0) {
-        const messagesJSON = JSON.parse(messages)
-        res.json(messagesJSON)
-    } else {
-        res.json({})
-    }
+    await res.send(db.get('messages').toJSON())
 })
 
 io.on('connection', (socket) => {
