@@ -1,0 +1,52 @@
+<div class="wrapper">
+    <form class="form">
+        <h1>
+            Say hi!
+        </h1>
+        <input type="text" id="author" author="author" class="author" placeholder="Your name" />
+        <input type="text" id="message" name="message" class="message" placeholder="Your message" />
+        <input type="submit" value="Send message" />
+    </form>
+    <ul class="messages">
+    </ul>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script>
+    $(function () {
+        const socket = io()
+
+        const SOCKET_MESSAGES = 'chat message'
+        const MESSAGE_TEMPLATE = (date, msg, author) => `
+            <li class="message">
+                <div>
+                    <small>${date}</small><p><strong>${author}:</strong> ${msg}</p>
+                </div>
+            </li>
+        `
+        const getMessages = async () => {
+            $.ajax('/messages', {
+                type: 'GET',
+                contentType: 'json'
+            }).then(messagesObject => {
+                $('.messages').html(messagesObject.messages.map(msg => MESSAGE_TEMPLATE(msg.dateTime, msg.message, msg.author)).join(''))
+            })
+        }
+
+        $('.form').submit(e => {
+            e.preventDefault()
+            const message = $('.message').val()
+            const author = $('.author').val()
+            socket.emit(SOCKET_MESSAGES, { message, author })
+            $('.message').val('')
+            getMessages()
+        })
+
+        socket.on(SOCKET_MESSAGES, msg => {
+            getMessages()
+        })
+
+        getMessages()
+    })
+</script>

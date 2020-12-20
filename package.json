@@ -2,5 +2,16 @@
   "name": "chat-app",
   "version": "1.0.0",
   "main": "index.js",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.17.1",
+    "express-handlebars": "^5.2.0",
+    "fs": "^0.0.1-security",
+    "lowdb": "^1.0.0",
+    "nodemon": "^2.0.6",
+    "socket.io": "^3.0.4"
+  },
+  "scripts": {
+    "start": "nodemon index.js --config nodemon.json"
+  }
 }
